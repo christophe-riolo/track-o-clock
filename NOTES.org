@@ -1,0 +1,40 @@
+* Goals
+** Start and stop timer [0/4]
+*** TODO I can start a timer when no timer is running
+*** TODO I can stop a timer that is running
+*** TODO I can start a new timer when another one is running
+*** TODO I can start a timer straight after a previous entry
+** Modify entries [0/3]
+*** TODO Running timers [0/4]
+**** TODO I can modify the start date
+**** TODO I can modify the title
+**** TODO I can modify the project
+**** TODO I can set an end date and it ends the timer
+*** TODO Finished timers [0/4]
+**** TODO I can modify the start date
+**** TODO I can modify the end date
+**** TODO I can modify the title
+**** TODO I can modify the project
+*** TODO I can bulk add entries
+** Manage projects [/]
+** Manage tags [/]
+** Record apps used by user [/]
+** Resilience [0/2]
+*** TODO Network [0/2]
+**** TODO The app can run offline
+**** TODO The app can stand loosing connection abruptly
+*** TODO The app offers to solve conflicts when going online
+** Reporting [/]
+* Libraries
+** API requests
+*** +ocaml-fastrest+
+*** +async-http+
+*** +morph+
+*** +ReWeb+
+*** [[https://github.com/anmonteiro/piaf][Piaf]]
+** UI
+   Revery
+* Journal
+** Created project <2020-03-24 mar.>
+- I created those notes first before any code.
+- I ran the command `pesy` and a base project was created. Time to Git.

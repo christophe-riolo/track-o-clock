@@ -1,0 +1,45 @@
+{
+  "name": "toggl_revery",
+  "version": "0.0.0",
+  "description": "My Project",
+  "esy": {
+    "build": "dune build -p <PACKAGE_NAME>",
+    "buildDev": "pesy",
+    "release": {
+      "releasedBinaries": [
+        "TogglReveryApp.exe"
+      ]
+    }
+  },
+  "buildDirs": {
+    "test": {
+      "require": ["toggl_revery.lib"],
+      "main": "TestTogglRevery",
+      "name": "TestTogglRevery.exe"
+    },
+    "library": {
+      "name": "toggl_revery.lib",
+      "namespace": "TogglRevery"
+    },
+    "executable": {
+      "require": ["toggl_revery.lib"],
+      "main": "TogglReveryApp",
+      "name": "TogglReveryApp.exe"
+    }
+  },
+  "scripts": {
+    "pesy": "bash -c 'env PESY_MODE=update pesy'",
+    "test": "esy x TestTogglRevery.exe"
+  },
+  "dependencies": {
+    "@opam/dune": ">=1.6.0",
+    "@esy-ocaml/reason": "*",
+    "ocaml": "^4.4.0"
+  },
+  "devDependencies": {
+    "ocaml": "4.7.1004",
+    "refmterr": "*",
+    "pesy": "*",
+    "@opam/merlin": "*"
+  }
+}
