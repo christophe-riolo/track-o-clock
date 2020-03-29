@@ -38,3 +38,7 @@
 ** Created project <2020-03-24 mar.>
 - I created those notes first before any code.
 - I ran the command `pesy` and a base project was created. Time to Git.
+** Installed first dependency <2020-03-29 dim.> 
+- I had to update Esy to latest version, it had trouble resolving the dependencies
+- I installed also utop as dev dependency, running ~esy utop~ is really nice
+- Piaf is really easy to use, especially module ~Piaf.Client.Oneshot~
