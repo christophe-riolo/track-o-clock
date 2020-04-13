@@ -42,3 +42,9 @@
 - I had to update Esy to latest version, it had trouble resolving the dependencies
 - I installed also utop as dev dependency, running ~esy utop~ is really nice
 - Piaf is really easy to use, especially module ~Piaf.Client.Oneshot~
+** Created basic authentication <2020-04-13 lun.>
+All of our requests will need authentication, and in Piaf there was no way to create a client that is
+adding the Authorization header, so I created a functor that adds that header to all the requests.
+The form might change later but the basic idea and authentication are there!
+
+Found a better way, function creates an authenticated client fist class module.

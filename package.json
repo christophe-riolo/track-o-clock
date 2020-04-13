@@ -19,7 +19,8 @@
         },
         "library": {
             "name": "toggl_revery.lib",
-            "namespace": "TogglRevery"
+            "namespace": "TogglRevery",
+            "require": ["piaf", "containers", "base64"]
         },
         "executable": {
             "require": ["toggl_revery.lib"],
@@ -33,13 +34,16 @@
     },
     "dependencies": {
         "@opam/dune": ">=1.6.0",
+        "@opam/containers": "*",
         "@reason-native-web/piaf": "*",
         "@esy-ocaml/reason": "*",
-        "ocaml": "^4.4.0"
+        "ocaml": "^4.4.0",
+        "@opam/base64": "*"
     },
     "devDependencies": {
         "ocaml": "4.7.1004",
         "@opam/utop": "*",
+        "@opam/ocp-indent": "*",
         "refmterr": "*",
         "pesy": "*",
         "@opam/merlin": "*"
