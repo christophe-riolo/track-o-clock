@@ -70,14 +70,14 @@ module F(A: sig val header: string end) : Client = struct
   end
 end
 
-module Authentication = struct
-  type meth = [ `Basic | `Session ]
+type meth =
+  | Basic of { username: string ; password : string }
+  | Bearer of string
 
-  let create_client ~(meth: meth) username password : ((module Client), string) result =
-    match meth with
-    | `Session -> Ok (module F(struct let header = "Bearer foo" end)) (* TODO *)
-    | `Basic -> (match Base64.encode (username ^ ":" ^ password) with
-        | Ok creds -> Ok (module F(struct let header = "Basic " ^ creds end))
-        | Error `Msg e -> Error e)
-end
+let create_client (meth: meth) : ((module Client), string) result =
+  match meth with
+  | Bearer token -> Ok (module F(struct let header = "Bearer " ^ token end))
+  | Basic { username ; password } -> (match Base64.encode (username ^ ":" ^ password) with
+      | Ok creds -> Ok (module F(struct let header = "Basic " ^ creds end))
+      | Error `Msg e -> Error e)
 

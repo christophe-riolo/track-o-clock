@@ -37,11 +37,11 @@
         "@opam/containers": "*",
         "@reason-native-web/piaf": "*",
         "@esy-ocaml/reason": "*",
-        "ocaml": "^4.4.0",
+        "ocaml": "4.7",
         "@opam/base64": "*"
     },
     "devDependencies": {
-        "ocaml": "4.7.1004",
+        "ocaml": "4.7",
         "@opam/utop": "*",
         "@opam/ocp-indent": "*",
         "refmterr": "*",

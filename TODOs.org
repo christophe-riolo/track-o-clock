@@ -48,3 +48,6 @@ adding the Authorization header, so I created a functor that adds that header to
 The form might change later but the basic idea and authentication are there!
 
 Found a better way, function creates an authenticated client fist class module.
+** Simplified the authenticationlibrary <2020-04-15 mer.>
+I realised I was going towards a library that was specific to Toggl with the ~`Session~ so I made the code a bit more generic.
+It is only covering Basic authentication and Bearer token but so far it is enough.
