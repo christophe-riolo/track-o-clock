@@ -25,6 +25,26 @@
 **** TODO The app can stand loosing connection abruptly
 *** TODO The app offers to solve conflicts when going online
 ** Reporting [/]
+* Roadmap
+** Release 0.1: Basic time entries
+*** DONE Create authentication
+    CLOSED: <2020-04-15 mer. 08:47>
+*** DONE List workspaces
+    CLOSED: [2020-04-30 jeu. 17:30]
+**** DONE Get JSON
+     CLOSED: [2020-04-29 mer. 16:20]
+**** DONE Convert JSON
+     CLOSED: [2020-04-30 jeu. 17:30]
+*** TODO List projects
+*** TODO Start time entry
+*** TODO Stop time entry
+*** TODO Get running time entry
+*** TODO Testing
+** Release 0.2: Time entries
+*** TODO Create time entry
+*** TODO Get time entry details
+*** TODO Modify time entry
+*** TODO Delete time entry
 * Libraries
 ** API requests
 *** +ocaml-fastrest+
@@ -51,3 +71,8 @@ Found a better way, function creates an authenticated client fist class module.
 ** Simplified the authenticationlibrary <2020-04-15 mer.>
 I realised I was going towards a library that was specific to Toggl with the ~`Session~ so I made the code a bit more generic.
 It is only covering Basic authentication and Bearer token but so far it is enough.
+** Implemented the time entry creation endpoint <2020-04-23 jeu.>
+I learned how to use PPXs with pesy, it's really easy in the end.
+Testing is still a bit difficult and it failed because I do not have the workspace ID,
+I need to rethink in which order to implement the endpoints.
+** Working with Lwt is sometimes hard to wrap your head around, but it's rewarding once it works. <2020-04-30 jeu.>

@@ -80,4 +80,3 @@ let create_client (meth: meth) : ((module Client), string) result =
   | Basic { username ; password } -> (match Base64.encode (username ^ ":" ^ password) with
       | Ok creds -> Ok (module F(struct let header = "Basic " ^ creds end))
       | Error `Msg e -> Error e)
-
