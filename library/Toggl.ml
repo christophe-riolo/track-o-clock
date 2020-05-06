@@ -30,7 +30,7 @@ module Api(Client: Authenticated.Client) = struct
     } [@@deriving yojson]
 
     let make ?description ?wid ?pid ?tid ?(billable=false) ~start ?stop ~duration ?(tags=[]) ?(duronly=false) ?at () =
-      {description; wid; pid; tid; billable; start; stop; duration; tags; duronly; at; created_with="toggl_revery"}
+      {description; wid; pid; tid; billable; start; stop; duration; tags; duronly; at; created_with="trackoclock"}
 
     let create t (client: Client.t) =
       let body = t

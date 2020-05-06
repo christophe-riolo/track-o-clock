@@ -1,6 +1,6 @@
 {
   "checksum": "7f897269a6739e7a4a01df69dd2d0725",
-  "root": "toggl_revery@link-dev:./package.json",
+  "root": "trackoclock@link-dev:./package.json",
   "node": {
     "yarn-pkg-config@github:esy-ocaml/yarn-pkg-config#db3a0b63883606dd57c54a7158d560d6cba8cd79@d41d8cd9": {
       "id":
@@ -18,9 +18,9 @@
       "dependencies": [],
       "devDependencies": []
     },
-    "toggl_revery@link-dev:./package.json": {
-      "id": "toggl_revery@link-dev:./package.json",
-      "name": "toggl_revery",
+    "trackoclock@link-dev:./package.json": {
+      "id": "trackoclock@link-dev:./package.json",
+      "name": "trackoclock",
       "version": "link-dev:./package.json",
       "source": {
         "type": "link-dev",

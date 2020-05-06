@@ -1,5 +1,5 @@
 {
-    "name": "toggl_revery",
+    "name": "trackoclock",
     "version": "0.0.0",
     "description": "My Project",
     "esy": {
@@ -7,31 +7,31 @@
         "buildDev": "pesy",
         "release": {
             "releasedBinaries": [
-                "TogglReveryApp.exe"
+                "TrackOClockApp.exe"
             ]
         }
     },
     "buildDirs": {
         "test": {
-            "require": ["toggl_revery.lib"],
-            "main": "TestTogglRevery",
-            "name": "TestTogglRevery.exe"
+            "require": ["trackoclock.lib"],
+            "main": "TestTrackOClock",
+            "name": "TestTrackOClock.exe"
         },
         "library": {
-            "name": "toggl_revery.lib",
-            "namespace": "TogglRevery",
+            "name": "trackoclock.lib",
+            "namespace": "TrackOClock",
             "require": ["piaf", "containers", "base64", "yojson", "ppx_deriving_yojson.runtime"],
             "preprocess": ["pps", "ppx_deriving_yojson"]
         },
         "executable": {
-            "require": ["toggl_revery.lib"],
-            "main": "TogglReveryApp",
-            "name": "TogglReveryApp.exe"
+            "require": ["trackoclock.lib"],
+            "main": "TrackOClockApp",
+            "name": "TrackOClockApp.exe"
         }
     },
     "scripts": {
         "pesy": "bash -c 'env PESY_MODE=update pesy'",
-        "test": "esy x TestTogglRevery.exe"
+        "test": "esy x TestTrackOClock.exe"
     },
     "dependencies": {
         "@opam/dune": ">=1.6.0",

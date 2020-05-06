@@ -1,28 +1,28 @@
-# toggl_revery
+# Track O'Clock
 
 
-[![CircleCI](https://circleci.com/gh/yourgithubhandle/toggl_revery/tree/master.svg?style=svg)](https://circleci.com/gh/yourgithubhandle/toggl_revery/tree/master)
+[![CircleCI](https://circleci.com/gh/christophe-riolo/track-o-clock/tree/master.svg?style=svg)](https://circleci.com/gh/christophe-riolo/track-o-clock/tree/master)
 
 
 **Contains the following libraries and executables:**
 
 ```
-toggl_revery@0.0.0
+trackoclock@0.0.0
 │
 ├─test/
-│   name:    TestTogglRevery.exe
-│   main:    TestTogglRevery
-│   require: toggl_revery.lib
+│   name:    TestTrackOClock.exe
+│   main:    TestTrackOClock
+│   require: trackoclock.lib
 │
 ├─library/
-│   library name: toggl_revery.lib
-│   namespace:    TogglRevery
+│   library name: trackoclock.lib
+│   namespace:    TrackOClock
 │   require:
 │
 └─executable/
-    name:    TogglReveryApp.exe
-    main:    TogglReveryApp
-    require: toggl_revery.lib
+    name:    TrackOClockApp.exe
+    main:    TrackOClockApp
+    require: trackoclock.lib
 ```
 
 ## Developing:
@@ -39,7 +39,7 @@ esy build
 After building the project, you can run the main binary that is produced.
 
 ```
-esy x TogglReveryApp.exe 
+esy x TrackOClockApp.exe 
 ```
 
 ## Running Tests:
