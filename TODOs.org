@@ -26,7 +26,7 @@
 *** TODO The app offers to solve conflicts when going online
 ** Reporting [/]
 * Roadmap
-** Release 0.1: Basic time entries
+** Release 0.1: Basic time entries in Toggl
 *** DONE Create authentication
     CLOSED: <2020-04-15 mer. 08:47>
 *** DONE List workspaces
@@ -35,12 +35,13 @@
      CLOSED: [2020-04-29 mer. 16:20]
 **** DONE Convert JSON
      CLOSED: [2020-04-30 jeu. 17:30]
-*** TODO List projects
+*** DONE List projects
+    CLOSED: [2020-05-25 lun. 18:21]
 *** TODO Start time entry
 *** TODO Stop time entry
 *** TODO Get running time entry
 *** TODO Testing
-** Release 0.2: Time entries
+** Release 0.2: Time entries in Toggl
 *** TODO Create time entry
 *** TODO Get time entry details
 *** TODO Modify time entry

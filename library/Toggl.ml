@@ -70,4 +70,35 @@ module Api(Client: Authenticated.Client) = struct
         >|= List.map (fun x -> CCResult.get_or_failwith@@of_yojson x)
       )
   end
+
+  module Project = struct
+    type t = {
+      id: int;
+      wid: int;
+      cid: int;
+      name: string;
+      billable: bool;
+      is_private: bool;
+      active: bool;
+      template: bool;
+      template_id: int option [@default None];
+      at: string;
+      created_at: string;
+      color: string;
+      auto_estimates: bool;
+      estimated_hours: bool option [@default None];
+      actual_hours: int option [@default None];
+      hex_color: string
+    } [@@deriving yojson]
+
+    let list wid (client: Client.t) =
+      Lwt_result.(
+        "/api/v8/workspaces/" ^ (string_of_int wid) ^ "/projects"
+        |> Client.get client
+        >>= Util.status_200_or_error
+        >|= Yojson.Safe.from_string
+        >|= Yojson.Safe.Util.to_list
+        >|= List.map (fun x -> CCResult.get_or_failwith@@of_yojson x)
+      )
+  end
 end
