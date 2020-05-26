@@ -1,4 +1,4 @@
-let status_200_or_error response =
-  if Piaf.Response.status response |> Piaf.Status.is_successful
-  then Piaf.Response.body response |> Piaf.Body.to_string |> Lwt_result.ok
-  else Piaf.Response.body response |> Piaf.Body.to_string |> Lwt.map (fun x -> Error x)
+let status_200_or_error (response: Piaf.Response.t) : (string, Piaf.Error.t) Lwt_result.t =
+  if Piaf.Status.is_successful response.status
+  then Piaf.Body.to_string response.body
+  else Lwt_result.(Piaf.Body.to_string response.body >>= (fun x -> Lwt.return (Error (`Msg x))))

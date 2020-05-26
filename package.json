@@ -40,11 +40,14 @@
         "@esy-ocaml/reason": "*",
         "ocaml": "4.7",
         "@opam/base64": "*",
+        "@reason-native-web/gluten-lwt-unix": "~0.2",
+        "@opam/lwt": "<5.3",
         "@opam/ppx_deriving_yojson": "*"
     },
     "devDependencies": {
-        "ocaml": "4.7",
+        "ocaml": "4.8",
         "@opam/utop": "*",
+        "@opam/atdgen": "*",
         "@opam/ocp-indent": "*",
         "refmterr": "*",
         "pesy": "*",
