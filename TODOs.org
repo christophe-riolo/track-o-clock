@@ -37,7 +37,8 @@
      CLOSED: [2020-04-30 jeu. 17:30]
 *** DONE List projects
     CLOSED: [2020-05-25 lun. 18:21]
-*** TODO Start time entry
+*** DONE Start time entry
+    CLOSED: [2020-05-26 mar. 09:54]
 *** TODO Stop time entry
 *** TODO Get running time entry
 *** TODO Testing
@@ -46,6 +47,7 @@
 *** TODO Get time entry details
 *** TODO Modify time entry
 *** TODO Delete time entry
+** Release 0.3: Basic frontend
 * Libraries
 ** API requests
 *** +ocaml-fastrest+

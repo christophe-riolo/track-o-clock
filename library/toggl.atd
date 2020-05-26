@@ -1,17 +1,17 @@
 type time_entry = {
-  ~id: int option;
-  ~description: string option;
-  ~wid: int option;
-  ~pid: int option;
-  ~tid: int option;
+  ?id: int option;
+  ?description: string option;
+  ?wid: int option;
+  ?pid: int option;
+  ?tid: int option;
   ~billable: bool;
-  ~start: string option;
-  ~stop: string option;
-  ~duration: int option;
-  created_with: string;
+  ?start: string option;
+  ?stop: string option;
+  ?duration: int option;
+  ?created_with: string option;
   ~tags: string list;
   ~duronly: bool;
-  ~at: string option
+  ?at: string option
 }
 
 type workspace = {
@@ -57,3 +57,4 @@ type project = {
 type workspace_list = workspace list
 type project_list = project list
 type wrapped_time_entry = {time_entry: time_entry}
+type data_time_entry = {data: time_entry}

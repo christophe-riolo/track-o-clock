@@ -28,7 +28,11 @@ module Api(Client: Authenticated.Client) = struct
       let body = {time_entry = t}
                  |> string_of_wrapped_time_entry
                  |> Piaf.Body.of_string
-      in Client.post client ~body "/api/v8/time_entries/start"
+      in Lwt_result.(
+          Client.post client ~body "/api/v8/time_entries/start"
+          >>= Util.status_200_or_error
+          >|= data_time_entry_of_string
+        )
   end
 
   module Workspace = struct
