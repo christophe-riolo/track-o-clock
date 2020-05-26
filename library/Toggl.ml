@@ -1,4 +1,5 @@
 open Authenticated
+open Toggl_j
 
 module Auth = struct
   type t =
@@ -13,92 +14,39 @@ module Auth = struct
 end
 
 module Api(Client: Authenticated.Client) = struct
-  module TimeEntry = struct
-    type t = {
-      description: string option;
-      wid: int option;
-      pid: int option;
-      tid: int option;
-      billable: bool;
-      start: string;
-      stop: string option;
-      duration: int;
-      created_with: string;
-      tags: string list;
-      duronly: bool;
-      at: string option
-    } [@@deriving yojson]
 
-    let make ?description ?wid ?pid ?tid ?(billable=false) ~start ?stop ~duration ?(tags=[]) ?(duronly=false) ?at () =
-      {description; wid; pid; tid; billable; start; stop; duration; tags; duronly; at; created_with="trackoclock"}
+  module TimeEntry = struct
+    let make = Toggl_v.create_time_entry ~created_with:"trackoclock"
 
     let create t (client: Client.t) =
-      let body = t
-                 |> to_yojson
-                 |> (fun te -> `Assoc [("time_entry", te)])
-                 |> Yojson.Safe.to_string
+      let body = {time_entry = t}
+                 |> string_of_wrapped_time_entry
                  |> Piaf.Body.of_string
       in Client.post client ~body "/api/v8/time_entries"
+
+    let start t (client: Client.t) =
+      let body = {time_entry = t}
+                 |> string_of_wrapped_time_entry
+                 |> Piaf.Body.of_string
+      in Client.post client ~body "/api/v8/time_entries/start"
   end
 
   module Workspace = struct
-    type t = {
-      id: int;
-      name: string;
-      profile: int;
-      premium: bool;
-      admin: bool;
-      default_hourly_rate: float;
-      default_currency: string;
-      only_admins_may_create_projects: bool;
-      only_admins_see_billable_rates: bool;
-      only_admins_see_team_dashboard: bool;
-      projects_billable_by_default: bool;
-      rounding: int;
-      rounding_minutes: int;
-      api_token: string;
-      at: string;
-      ical_enabled: bool
-    } [@@deriving yojson]
-
     let list (client: Client.t) =
       Lwt_result.(
         Client.get client "/api/v8/workspaces"
         >>= Util.status_200_or_error
-        >|= Yojson.Safe.from_string
-        >|= Yojson.Safe.Util.to_list
-        >|= List.map (fun x -> CCResult.get_or_failwith@@of_yojson x)
+        >|= workspace_list_of_string
       )
   end
 
   module Project = struct
-    type t = {
-      id: int;
-      wid: int;
-      cid: int;
-      name: string;
-      billable: bool;
-      is_private: bool;
-      active: bool;
-      template: bool;
-      template_id: int option [@default None];
-      at: string;
-      created_at: string;
-      color: string;
-      auto_estimates: bool;
-      estimated_hours: bool option [@default None];
-      actual_hours: int option [@default None];
-      hex_color: string
-    } [@@deriving yojson]
-
     let list wid (client: Client.t) =
       Lwt_result.(
         "/api/v8/workspaces/" ^ (string_of_int wid) ^ "/projects"
         |> Client.get client
         >>= Util.status_200_or_error
-        >|= Yojson.Safe.from_string
-        >|= Yojson.Safe.Util.to_list
-        >|= List.map (fun x -> CCResult.get_or_failwith@@of_yojson x)
+        >|= project_list_of_string
       )
   end
 end

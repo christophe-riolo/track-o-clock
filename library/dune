@@ -1,12 +1,26 @@
-
-; !!!! This dune file is generated from the package.json file by pesy. If you modify it by hand
-; !!!! your changes will be undone! Instead, edit the package.json and then rerun 'esy pesy' at the project root.
-; !!!! If you want to stop using pesy and manage this file by hand, change package.json's 'esy.build' command to: refmterr dune build -p  trackoclock
 (library
-   ; The namespace that other packages/libraries will access this library through
-   (name TrackOClock)
-   ; Other libraries list this name in their package.json 'require' field to use this library.
-   (public_name trackoclock.lib)
-   (libraries  piaf containers base64 yojson ppx_deriving_yojson.runtime )
-   (preprocess ( pps ppx_deriving_yojson ))  ; From package.json preprocess field
+ ; The namespace that other packages/libraries will access this library through
+ (name TrackOClock)
+ ; Other libraries list this name in their package.json 'require' field to use this library.
+ (public_name trackoclock.lib)
+ (libraries  piaf containers base64 yojson ppx_deriving_yojson.runtime atdgen-runtime)
+ (preprocess (pps ppx_deriving_yojson))
+)
+
+(rule
+ (targets toggl_j.ml toggl_j.mli)
+ (deps toggl.atd)
+ (action (run atdgen -j toggl.atd))
+)
+
+(rule
+ (targets toggl_t.ml toggl_t.mli)
+ (deps toggl.atd)
+ (action (run atdgen -t toggl.atd))
+)
+
+(rule
+ (targets toggl_v.ml toggl_v.mli)
+ (deps toggl.atd)
+ (action (run atdgen -v toggl.atd))
 )

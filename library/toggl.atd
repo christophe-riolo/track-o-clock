@@ -1,0 +1,59 @@
+type time_entry = {
+  ~id: int option;
+  ~description: string option;
+  ~wid: int option;
+  ~pid: int option;
+  ~tid: int option;
+  ~billable: bool;
+  ~start: string option;
+  ~stop: string option;
+  ~duration: int option;
+  created_with: string;
+  ~tags: string list;
+  ~duronly: bool;
+  ~at: string option
+}
+
+type workspace = {
+  id: int;
+  name: string;
+  profile: int;
+  premium: bool;
+  admin: bool;
+  default_hourly_rate: float;
+  default_currency: string;
+  only_admins_may_create_projects: bool;
+  only_admins_see_billable_rates: bool;
+  only_admins_see_team_dashboard: bool;
+  projects_billable_by_default: bool;
+  rounding: int;
+  rounding_minutes: int;
+  api_token: string;
+  at: string;
+  ical_enabled: bool
+}
+
+type project = {
+  id: int;
+  wid: int;
+  cid: int;
+  name: string;
+  billable: bool;
+  is_private: bool;
+  active: bool;
+  template: bool;
+  ~template_id: int option;
+  at: string;
+  created_at: string;
+  color: string;
+  auto_estimates: bool;
+  ~estimated_hours: bool option;
+  ~actual_hours: int option;
+  hex_color: string
+}
+
+(* API specific types *)
+
+type workspace_list = workspace list
+type project_list = project list
+type wrapped_time_entry = {time_entry: time_entry}

@@ -3,8 +3,8 @@
     "version": "0.0.0",
     "description": "My Project",
     "esy": {
-        "build": "dune build -p <PACKAGE_NAME>",
-        "buildDev": "pesy",
+        "build": "dune build -p trackoclock",
+        "buildDev": "dune build -p  trackoclock",
         "release": {
             "releasedBinaries": [
                 "TrackOClockApp.exe"
@@ -40,6 +40,7 @@
         "@esy-ocaml/reason": "*",
         "ocaml": "4.7",
         "@opam/base64": "*",
+        "@opam/atdgen-runtime": "*",
         "@reason-native-web/gluten-lwt-unix": "~0.2",
         "@opam/lwt": "<5.3",
         "@opam/ppx_deriving_yojson": "*"
