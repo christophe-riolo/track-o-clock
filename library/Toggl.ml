@@ -1,5 +1,5 @@
 open Authenticated
-open Toggl_j
+include Toggl_j
 
 module Auth = struct
   type t =
@@ -30,6 +30,15 @@ module Api(Client: Authenticated.Client) = struct
                  |> Piaf.Body.of_string
       in Lwt_result.(
           Client.post client ~body "/api/v8/time_entries/start"
+          >>= Util.status_200_or_error
+          >|= data_time_entry_of_string
+        )
+
+    let stop tid (client: Client.t) =
+      let body = Piaf.Body.empty
+      in Lwt_result.(
+          "/api/v8/time_entries/" ^ string_of_int tid ^ "/stop"
+          |> Client.put client ~body
           >>= Util.status_200_or_error
           >|= data_time_entry_of_string
         )
