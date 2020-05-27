@@ -1,7 +1,19 @@
 open Authenticated
-include Toggl_j
+
+module Types = struct
+
+  include Toggl_t
+  include Toggl_j
+  include Toggl_v
+
+  let create_time_entry = Toggl_v.create_time_entry ~created_with:"trackoclock"
+
+end
+
+open Types
 
 module Auth = struct
+
   type t =
     | Basic of {username: string ; password: string}
     | ApiToken of string
@@ -11,12 +23,12 @@ module Auth = struct
      | ApiToken token -> Authenticated.Basic { username=token ; password="api_token" }
      | Basic {username; password} -> Authenticated.Basic { username ; password })
     |> create_client
+
 end
 
 module Api(Client: Authenticated.Client) = struct
 
   module TimeEntry = struct
-    let make = Toggl_v.create_time_entry ~created_with:"trackoclock"
 
     let create t (client: Client.t) =
       let open Lwt_result in
@@ -57,6 +69,7 @@ module Api(Client: Authenticated.Client) = struct
   end
 
   module Workspace = struct
+
     let list (client: Client.t) =
       let open Lwt_result in
       Client.get client "/api/v8/workspaces"
@@ -65,6 +78,7 @@ module Api(Client: Authenticated.Client) = struct
   end
 
   module Project = struct
+
     let list wid (client: Client.t) =
       let open Lwt_result in
       "/api/v8/workspaces/" ^ (string_of_int wid) ^ "/projects"
