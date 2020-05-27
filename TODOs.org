@@ -41,7 +41,8 @@
     CLOSED: [2020-05-26 mar. 09:54]
 *** DONE Stop time entry
     CLOSED: [2020-05-26 mar. 22:56]
-*** TODO Get running time entry
+*** DONE Get running time entry
+    CLOSED: [2020-05-27 mer. 08:48]
 *** TODO Testing
 ** Release 0.2: Time entries in Toggl
 *** TODO Create time entry
