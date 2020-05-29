@@ -12,7 +12,7 @@
         }
     },
     "scripts": {
-        "test": "esy x TestTrackOClock.exe"
+        "test": "esy dune runtest"
     },
     "dependencies": {
         "@opam/dune": ">=1.6.0",
@@ -22,8 +22,9 @@
         "ocaml": "4.7",
         "@opam/base64": "*",
         "@opam/atdgen-runtime": "*",
-        "@reason-native-web/gluten-lwt-unix": "~0.2",
+        "@reason-native-web/gluten-lwt-unix": "*",
         "@opam/lwt": "<5.3",
+        "@opam/ppx_import": "*",
         "@opam/ppx_deriving_yojson": "*"
     },
     "devDependencies": {
@@ -33,6 +34,7 @@
         "@opam/ocp-indent": "*",
         "refmterr": "*",
         "@opam/alcotest": "*",
+        "@opam/alcotest-lwt": "*",
         "pesy": "*",
         "@opam/merlin": "*"
     }

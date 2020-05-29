@@ -17,20 +17,21 @@ type time_entry = {
 type workspace = {
   id: int;
   name: string;
-  profile: int;
-  premium: bool;
-  admin: bool;
-  default_hourly_rate: float;
+  ?profile: int option;
+  ~premium: bool;
+  ~admin: bool;
+  ~default_hourly_rate: float;
   default_currency: string;
-  only_admins_may_create_projects: bool;
-  only_admins_see_billable_rates: bool;
-  only_admins_see_team_dashboard: bool;
-  projects_billable_by_default: bool;
-  rounding: int;
-  rounding_minutes: int;
-  api_token: string;
+  ~only_admins_may_create_projects: bool;
+  ~only_admins_see_billable_rates: bool;
+  ~only_admins_see_team_dashboard: bool;
+  ~projects_billable_by_default: bool;
+  ~rounding: int;
+  ~rounding_minutes: int;
+  ?api_token: string option;
   at: string;
-  ical_enabled: bool
+  ~ical_enabled: bool;
+  ?logo_url: string option
 }
 
 type project = {
@@ -38,18 +39,18 @@ type project = {
   wid: int;
   cid: int;
   name: string;
-  billable: bool;
-  is_private: bool;
-  active: bool;
-  template: bool;
-  ~template_id: int option;
+  ~billable: bool;
+  ~is_private: bool;
+  ~active: bool;
+  ~template: bool;
+  ?template_id: int option;
   at: string;
-  created_at: string;
-  color: string;
-  auto_estimates: bool;
-  ~estimated_hours: bool option;
-  ~actual_hours: int option;
-  hex_color: string
+  ?created_at: string option;
+  ?color: string option;
+  ~auto_estimates: bool;
+  ~estimated_hours: bool;
+  ~actual_hours: int;
+  ?hex_color: string option
 }
 
 (* API specific types *)
