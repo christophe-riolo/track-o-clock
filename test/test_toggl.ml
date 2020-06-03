@@ -17,6 +17,7 @@ module Testables = struct
 end
 
 let client = TogglClient.create (Uri.of_string "http://toggle.com")
+let error_client = TogglErrorClient.create (Uri.of_string "http://toggle.com")
 let raise_error result =
   let open Lwt_result in
   result
@@ -94,59 +95,142 @@ module TestNormalBehaviour = struct
       ()
   ]
 
-  let test_start_time_entry _switch () = Lwt_result.(
-      client
-      >>= Api.TimeEntry.start time_entry
-      >|= check Testables.time_entry "Same time entry" time_entry
-      |> raise_error
-    )
+  open Lwt_result
+  let test_start_time_entry _switch () =
+    client
+    >>= Api.TimeEntry.start time_entry
+    >|= check Testables.time_entry "Same time entry" time_entry
+    |> raise_error
 
-  let test_stop_time_entry _switch () = Lwt_result.(
-      client
-      >>= Api.TimeEntry.stop 436694100
-      >|= check Testables.time_entry "Same time entry" time_entry
-      |> raise_error
-    )
+  let test_stop_time_entry _switch () =
+    client
+    >>= Api.TimeEntry.stop 436694100
+    >|= check Testables.time_entry "Same time entry" time_entry
+    |> raise_error
 
-  let test_create_time_entry _switch () = Lwt_result.(
-      client
-      >>= Api.TimeEntry.create time_entry
-      >|= check Testables.time_entry "Same time entry" time_entry
-      |> raise_error
-    )
+  let test_create_time_entry _switch () =
+    client
+    >>= Api.TimeEntry.create time_entry
+    >|= check Testables.time_entry "Same time entry" time_entry
+    |> raise_error
 
-  let test_current_time_entry _switch () = Lwt_result.(
-      client
-      >>= Api.TimeEntry.current
-      >|= check Testables.time_entry "Same time entry" time_entry
-      |> raise_error
-    )
+  let test_current_time_entry _switch () =
+    client
+    >>= Api.TimeEntry.current
+    >|= check Testables.time_entry "Same time entry" time_entry
+    |> raise_error
 
-  let test_list_workspaces _switch () = Lwt_result.(
-      client
-      >>= Api.Workspace.list
-      >|= check (list Testables.workspace) "Same workspaces" workspaces
-      |> raise_error
-    )
+  let test_list_workspaces _switch () =
+    client
+    >>= Api.Workspace.list
+    >|= check (list Testables.workspace) "Same workspaces" workspaces
+    |> raise_error
 
-  let test_list_projects _switch () = Lwt_result.(
-      client
-      >>= Api.Project.list 777
-      >|= check (list Testables.project) "Same projects" projects
-      |> raise_error
-    )
+  let test_list_projects _switch () =
+    client
+    >>= Api.Project.list 777
+    >|= check (list Testables.project) "Same projects" projects
+    |> raise_error
+
+end
+
+module TestNotFound = struct
+
+  module Api = TrackOClock.Toggl.Api(TogglClient)
+  open Lwt_result
+
+  let test_stop_time_entry _switch () =
+    client
+    >>= Api.TimeEntry.stop 0
+    |> map_err Piaf.Error.to_string
+    |> map_err (check string "Says that url is not found" "not_found")
+    |> Lwt.map Result.get_error
+
+  let test_list_projects _switch () =
+    client
+    >>= Api.Project.list 0
+    |> map_err Piaf.Error.to_string
+    |> map_err (check string "Says that url is not found" "not_found")
+    |> Lwt.map Result.get_error
+
+end
+
+module TestConnectionError = struct
+
+  module Api = TrackOClock.Toggl.Api(TogglErrorClient)
+  open Lwt_result
+
+  let test_stop_time_entry _switch () =
+    error_client
+    >>= Api.TimeEntry.stop 0
+    |> map_err Piaf.Error.to_string
+    |> map_err CCString.trim
+    |> map_err (check string "Returns error" "Connect Error: connection error")
+    |> Lwt.map Result.get_error
+
+  let test_list_projects _switch () =
+    error_client
+    >>= Api.Project.list 0
+    |> map_err Piaf.Error.to_string
+    |> map_err CCString.trim
+    |> map_err (check string "Returns error" "Connect Error: connection error")
+    |> Lwt.map Result.get_error
+
+  let test_start_time_entry _switch () =
+    error_client
+    >>= Api.TimeEntry.start (create_time_entry ())
+    |> map_err Piaf.Error.to_string
+    |> map_err CCString.trim
+    |> map_err (check string "Returns error" "Connect Error: connection error")
+    |> Lwt.map Result.get_error
+
+  let test_create_time_entry _switch () =
+    error_client
+    >>= Api.TimeEntry.create (create_time_entry ())
+    |> map_err Piaf.Error.to_string
+    |> map_err CCString.trim
+    |> map_err (check string "Returns error" "Connect Error: connection error")
+    |> Lwt.map Result.get_error
+
+  let test_current_time_entry _switch () =
+    error_client
+    >>= Api.TimeEntry.current
+    |> map_err Piaf.Error.to_string
+    |> map_err CCString.trim
+    |> map_err (check string "Returns error" "Connect Error: connection error")
+    |> Lwt.map Result.get_error
+
+  let test_list_workspaces _switch () =
+    error_client
+    >>= Api.Workspace.list
+    |> map_err Piaf.Error.to_string
+    |> map_err CCString.trim
+    |> map_err (check string "Returns error" "Connect Error: connection error")
+    |> Lwt.map Result.get_error
 
 end
 
 let () =
+  let open Alcotest_lwt in
   Lwt_main.run @@ Alcotest_lwt.run "foo" [
-    "Normal behaviour", [
-      Alcotest_lwt.test_case "Creating time entry response is parsed" `Quick TestNormalBehaviour.test_create_time_entry;
-      Alcotest_lwt.test_case "Starting time entry response is parsed" `Quick TestNormalBehaviour.test_start_time_entry;
-      Alcotest_lwt.test_case "Stopping time entry response is parsed" `Quick TestNormalBehaviour.test_stop_time_entry;
-      Alcotest_lwt.test_case "Getting current time entry response is parsed" `Quick TestNormalBehaviour.test_stop_time_entry;
-      Alcotest_lwt.test_case "Getting all workspaces response is parsed" `Quick TestNormalBehaviour.test_list_workspaces;
-      Alcotest_lwt.test_case "Getting all projects response is parsed" `Quick TestNormalBehaviour.test_list_projects
-
-    ]
+    "Normal behaviour", TestNormalBehaviour.[
+      test_case "Creating time entry response is parsed" `Quick test_create_time_entry;
+      test_case "Starting time entry response is parsed" `Quick test_start_time_entry;
+      test_case "Stopping time entry response is parsed" `Quick test_stop_time_entry;
+      test_case "Getting current time entry response is parsed" `Quick test_current_time_entry;
+      test_case "Getting all workspaces response is parsed" `Quick test_list_workspaces;
+      test_case "Getting all projects response is parsed" `Quick test_list_projects;
+    ];
+    "Page not found", TestNotFound.[
+      test_case "Stopping time entry response is parsed" `Quick test_stop_time_entry;
+      test_case "Getting all projects response is parsed" `Quick test_list_projects;
+    ];
+    "Error case", TestConnectionError.[
+      test_case "Creating time entry response returns error" `Quick test_create_time_entry;
+      test_case "Starting time entry response returns error" `Quick test_start_time_entry;
+      test_case "Stopping time entry response returns error" `Quick test_stop_time_entry;
+      test_case "Getting current time entry response returns error" `Quick test_current_time_entry;
+      test_case "Getting all workspaces response returns error" `Quick test_list_workspaces;
+      test_case "Getting all projects response returns error" `Quick test_list_projects;
+    ];
   ]

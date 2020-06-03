@@ -43,7 +43,9 @@
     CLOSED: [2020-05-26 mar. 22:56]
 *** DONE Get running time entry
     CLOSED: [2020-05-27 mer. 08:48]
-*** TODO Testing
+*** DONE Testing
+    CLOSED: [2020-06-03 mer. 16:56]
+*** TODO Add testing to CI
 ** Release 0.2: Time entries in Toggl
 *** TODO Create time entry
 *** TODO Get time entry details
