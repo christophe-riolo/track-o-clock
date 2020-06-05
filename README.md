@@ -7,7 +7,7 @@
 **Contains the following libraries and executables:**
 
 ```
-trackoclock@0.0.0
+trackoclock@0.1.0
 │
 ├─test/
 │   name:    TestTrackOClock.exe
