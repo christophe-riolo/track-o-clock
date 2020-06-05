@@ -48,3 +48,10 @@ esy x TrackOClockApp.exe
 # Runs the "test" command in `package.json`.
 esy test
 ```
+
+## Bumping verions:
+
+```
+# Use bump-patch, bump-minor or bump-major
+esy bump-minor
+```

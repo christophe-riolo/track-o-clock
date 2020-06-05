@@ -12,7 +12,11 @@
         }
     },
     "scripts": {
-        "test": "esy dune runtest"
+        "test": "dune runtest",
+        "watch": "dume build @all -w",
+        "bump-patch": "bump patch --commit \"Release v\" --tag \"v\" package.json README.md",
+        "bump-minor": "bump minor --commit \"Release v\" --tag \"v\" package.json README.md",
+        "bump-major": "bump major --commit \"Release v\" --tag \"v\" package.json README.md"
     },
     "dependencies": {
         "@opam/dune": ">=1.6.0",
@@ -36,6 +40,7 @@
         "@opam/alcotest": "*",
         "@opam/alcotest-lwt": "*",
         "pesy": "*",
-        "@opam/merlin": "*"
+        "@opam/merlin": "*",
+        "@jsdevtools/version-bump-prompt": "*"
     }
 }
