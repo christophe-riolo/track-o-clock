@@ -16,8 +16,8 @@ module Testables = struct
   end)
 end
 
-let client = TogglClient.create (Uri.of_string "http://toggle.com")
-let error_client = TogglErrorClient.create (Uri.of_string "http://toggle.com")
+let client = TogglClient.create (Uri.of_string "https://api.toggl.com")
+let error_client = TogglErrorClient.create (Uri.of_string "https://api.toggl.com")
 let raise_error result =
   let open Lwt_result in
   result

@@ -1,5 +1,3 @@
-open Authenticated
-
 module Types = struct
 
   include Toggl_t
@@ -18,15 +16,19 @@ module Auth = struct
     | Basic of {username: string ; password: string}
     | ApiToken of string
 
-  let get_client meth =
+  let get_header meth =
     (match meth with
      | ApiToken token -> Authenticated.Basic { username=token ; password="api_token" }
      | Basic {username; password} -> Authenticated.Basic { username ; password })
-    |> create_client
+    |> Authenticated.create_header
 
 end
 
-module Api(Client: Authenticated.Client) = struct
+module Client(Authentication: sig val auth: Auth.t end) = Authenticated.F(struct
+    let header = Auth.get_header Authentication.auth |> CCResult.get_or_failwith
+  end)
+
+module Api(Client: module type of Piaf.Client) = struct
 
   module TimeEntry = struct
 
@@ -35,7 +37,8 @@ module Api(Client: Authenticated.Client) = struct
       let body = {time_entry = t}
                  |> string_of_wrapped_time_entry
                  |> Piaf.Body.of_string
-      in Client.post client ~body "/api/v8/time_entries"
+      in
+      Client.post client ~body "/api/v8/time_entries"
       >>= Util.status_200_or_error
       >|= data_time_entry_of_string
       >|= (fun x -> x.data)
@@ -45,15 +48,16 @@ module Api(Client: Authenticated.Client) = struct
       let body = {time_entry = t}
                  |> string_of_wrapped_time_entry
                  |> Piaf.Body.of_string
-      in Client.post client ~body "/api/v8/time_entries/start"
+      in
+      Client.post client ~body "/api/v8/time_entries/start"
       >>= Util.status_200_or_error
       >|= data_time_entry_of_string
       >|= (fun x -> x.data)
 
     let stop tid (client: Client.t) =
       let open Lwt_result in
-      let body = Piaf.Body.empty
-      in "/api/v8/time_entries/" ^ string_of_int tid ^ "/stop"
+      let body = Piaf.Body.empty in
+      "/api/v8/time_entries/" ^ string_of_int tid ^ "/stop"
       |> Client.put client ~body
       >>= Util.status_200_or_error
       >|= data_time_entry_of_string
@@ -62,6 +66,14 @@ module Api(Client: Authenticated.Client) = struct
     let current (client: Client.t) =
       let open Lwt_result in
       Client.get client "/api/v8/time_entries/current"
+      >>= Util.status_200_or_error
+      >|= data_time_entry_of_string
+      >|= (fun x -> x.data)
+
+    let details tid (client: Client.t) =
+      let open Lwt_result in
+      "/api/v8/time_entries/" ^ (string_of_int tid)
+      |> Client.get client
       >>= Util.status_200_or_error
       >|= data_time_entry_of_string
       >|= (fun x -> x.data)

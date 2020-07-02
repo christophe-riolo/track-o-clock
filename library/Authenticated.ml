@@ -1,9 +1,8 @@
 module type Client = module type of Piaf.Client
 
-module F(A: sig val header: string end) : Client = struct
-  open Piaf.Client
+module F(A: sig val header: string end) : Client with type t = Piaf.Client.t= struct
+  include Piaf.Client
 
-  type t = Piaf.Client.t
   let create = create
   let shutdown = shutdown
 
@@ -74,9 +73,9 @@ type meth =
   | Basic of { username: string ; password : string }
   | Bearer of string
 
-let create_client (meth: meth) : ((module Client), string) result =
+let create_header (meth: meth) : (string, string) result =
   match meth with
-  | Bearer token -> Ok (module F(struct let header = "Bearer " ^ token end))
+  | Bearer token -> Ok ("Bearer " ^ token)
   | Basic { username ; password } -> (match Base64.encode (username ^ ":" ^ password) with
-      | Ok creds -> Ok (module F(struct let header = "Basic " ^ creds end))
+      | Ok creds -> Ok ("Basic " ^ creds)
       | Error `Msg e -> Error e)
