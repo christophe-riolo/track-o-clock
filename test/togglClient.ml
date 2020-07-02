@@ -95,6 +95,7 @@ let get (_t: t) ?(headers: (string*string) list option) path =
   match path with
   | "/api/v8/workspaces/777/projects" -> Lwt_result.return (Response.of_string `OK ~body:projects)
   | "/api/v8/time_entries/current" -> Lwt_result.return (Response.of_string `OK ~body:time_entry)
+  | "/api/v8/time_entries/436694100" -> Lwt_result.return (Response.of_string `OK ~body:time_entry)
   | "/api/v8/workspaces" -> Lwt_result.return (Response.of_string `OK ~body:workspaces)
   | _ -> Lwt_result.return (Response.of_string ~body:"not_found" `Not_found)
 

@@ -120,6 +120,12 @@ module TestNormalBehaviour = struct
     >|= check Testables.time_entry "Same time entry" time_entry
     |> raise_error
 
+  let test_time_entry_details _switch () =
+    client
+    >>= Api.TimeEntry.details 436694100
+    >|= check Testables.time_entry "Same time entry" time_entry
+    |> raise_error
+
   let test_list_workspaces _switch () =
     client
     >>= Api.Workspace.list
@@ -149,6 +155,13 @@ module TestNotFound = struct
   let test_list_projects _switch () =
     client
     >>= Api.Project.list 0
+    |> map_err Piaf.Error.to_string
+    |> map_err (check string "Says that url is not found" "not_found")
+    |> Lwt.map Result.get_error
+
+  let test_time_entry_details _switch () =
+    client
+    >>= Api.TimeEntry.details 0
     |> map_err Piaf.Error.to_string
     |> map_err (check string "Says that url is not found" "not_found")
     |> Lwt.map Result.get_error
@@ -200,6 +213,14 @@ module TestConnectionError = struct
     |> map_err (check string "Returns error" "Connect Error: connection error")
     |> Lwt.map Result.get_error
 
+  let test_time_entry_details _switch () =
+    error_client
+    >>= Api.TimeEntry.stop 0
+    |> map_err Piaf.Error.to_string
+    |> map_err CCString.trim
+    |> map_err (check string "Returns error" "Connect Error: connection error")
+    |> Lwt.map Result.get_error
+
   let test_list_workspaces _switch () =
     error_client
     >>= Api.Workspace.list
@@ -218,18 +239,21 @@ let () =
       test_case "Starting time entry response is parsed" `Quick test_start_time_entry;
       test_case "Stopping time entry response is parsed" `Quick test_stop_time_entry;
       test_case "Getting current time entry response is parsed" `Quick test_current_time_entry;
+      test_case "Getting specified time entry response is parsed" `Quick test_time_entry_details;
       test_case "Getting all workspaces response is parsed" `Quick test_list_workspaces;
       test_case "Getting all projects response is parsed" `Quick test_list_projects;
     ];
     "Page not found", TestNotFound.[
       test_case "Stopping time entry response is parsed" `Quick test_stop_time_entry;
       test_case "Getting all projects response is parsed" `Quick test_list_projects;
+      test_case "Getting specified time entry response is parsed" `Quick test_time_entry_details;
     ];
     "Error case", TestConnectionError.[
       test_case "Creating time entry response returns error" `Quick test_create_time_entry;
       test_case "Starting time entry response returns error" `Quick test_start_time_entry;
       test_case "Stopping time entry response returns error" `Quick test_stop_time_entry;
       test_case "Getting current time entry response returns error" `Quick test_current_time_entry;
+      test_case "Getting specified time entry response returns error" `Quick test_time_entry_details;
       test_case "Getting all workspaces response returns error" `Quick test_list_workspaces;
       test_case "Getting all projects response returns error" `Quick test_list_projects;
     ];
