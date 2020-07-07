@@ -21,14 +21,14 @@
     "dependencies": {
         "@opam/dune": ">=1.6.0",
         "@opam/containers": "*",
-        "@reason-native-web/piaf": "~1.3",
+        "@reason-native-web/piaf": "*",
         "@esy-ocaml/reason": "*",
-        "ocaml": "4.7",
+        "ocaml": "4.8",
         "@opam/base64": "*",
         "@opam/atdgen-runtime": "*",
         "@reason-native-web/gluten-lwt-unix": "*",
-        "@opam/lwt": "<5.3",
-        "@opam/ppx_import": "*",
+        "@opam/lwt": "*",
+        "@opam/ppx_import": "1.7.1",
         "@opam/ppx_deriving_yojson": "*"
     },
     "devDependencies": {

@@ -89,7 +89,6 @@ let put (_t: t) ?(headers: (string*string) list option) ?(body: Body.t option) p
   | "/api/v8/time_entries/436694100/stop" -> Lwt_result.return (Response.of_string `OK ~body:time_entry)
   | _ -> Lwt_result.return (Response.of_string ~body:"not_found" `Not_found)
 
-
 let get (_t: t) ?(headers: (string*string) list option) path =
   ignore headers;
   match path with
@@ -99,3 +98,8 @@ let get (_t: t) ?(headers: (string*string) list option) path =
   | "/api/v8/workspaces" -> Lwt_result.return (Response.of_string `OK ~body:workspaces)
   | _ -> Lwt_result.return (Response.of_string ~body:"not_found" `Not_found)
 
+let delete (_t: t) ?(headers: (string*string) list option) ?(body: Body.t option) path =
+  ignore (headers, body);
+  match path with
+  | "/api/v8/time_entries/436694100" -> Lwt_result.return (Response.of_string `OK ~body:"")
+  | _ -> Lwt_result.return (Response.of_string ~body:"not_found" `Not_found)

@@ -78,6 +78,12 @@ module Api(Client: module type of Piaf.Client) = struct
       >|= data_time_entry_of_string
       >|= (fun x -> x.data)
 
+    let delete tid (client: Client.t) =
+      let open Lwt_result in
+      "/api/v8/time_entries/" ^ (string_of_int tid)
+      |> Client.delete client
+      >>= Util.status_200_or_error
+
   end
 
   module Workspace = struct
