@@ -13,7 +13,7 @@ jobs:
           command: esy build
       - run:
           name: Test
-          command: esy test
+          command: esy test --debug-backtrace
 workflows:
   version: 2.1
   test:
