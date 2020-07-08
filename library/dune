@@ -3,7 +3,15 @@
  (name TrackOClock)
  ; Other libraries list this name in their package.json 'require' field to use this library.
  (public_name trackoclock.lib)
- (libraries  piaf containers base64 yojson ppx_deriving_yojson.runtime atdgen-runtime)
+ (libraries  piaf
+             containers
+             base64
+             yojson
+             ppx_deriving_yojson.runtime
+             atdgen-runtime
+             ptime
+             ptime.clock.os
+ )
  (preprocess (pps ppx_deriving_yojson))
 )
 
