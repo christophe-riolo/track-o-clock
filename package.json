@@ -28,6 +28,7 @@
         "@opam/atdgen-runtime": "*",
         "@reason-native-web/gluten-lwt-unix": "*",
         "@opam/lwt": "*",
+        "@opam/ptime": "*",
         "@opam/ppx_import": "1.7.1",
         "@opam/ppx_deriving_yojson": "*"
     },

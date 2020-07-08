@@ -117,6 +117,28 @@ module TestNormalBehaviour = struct
     >|= check string "Same workspaces" ""
     |> raise_error
 
+  let test_list_time_entries_no_query _switch () =
+    client
+    >>= Api.TimeEntry.list
+    >|= check (list Testables.Toggl.time_entry) "Same projects" []
+    |> raise_error
+
+  let test_list_time_entries_query _switch () =
+    client
+    >>= Api.TimeEntry.list
+      ~start_date:(CCOpt.get_exn @@ Ptime.of_date (2020, 1, 1))
+      ~end_date:(CCOpt.get_exn @@ Ptime.of_date (2020, 1, 2))
+    >|= check (list Testables.Toggl.time_entry) "Same projects" [time_entry]
+    |> raise_error
+
+  let test_list_time_entries_future _switch () =
+    client
+    >>= Api.TimeEntry.list
+      ~start_date:(CCOpt.get_exn @@ Ptime.of_date (4020, 1, 1))
+      ~end_date:(CCOpt.get_exn @@ Ptime.of_date (4020, 1, 2))
+    >|= check (list Testables.Toggl.time_entry) "Same projects" []
+    |> raise_error
+
   let test_list_workspaces _switch () =
     client
     >>= Api.Workspace.list
@@ -238,7 +260,10 @@ let () =
       test_case "Stopping time entry response is parsed" `Quick test_stop_time_entry;
       test_case "Getting current time entry response is parsed" `Quick test_current_time_entry;
       test_case "Getting specified time entry response is parsed" `Quick test_time_entry_details;
-      test_case "Getting specified time entry response is parsed" `Quick test_delete_time_entry;
+      test_case "Deleting specified time entry response is parsed" `Quick test_delete_time_entry;
+      test_case "Getting all time entries without query response is parsed" `Quick test_list_time_entries_no_query;
+      test_case "Getting all time entries with query response is parsed" `Quick test_list_time_entries_query;
+      test_case "Getting no time entries with query is parsed" `Quick test_list_time_entries_future;
       test_case "Getting all workspaces response is parsed" `Quick test_list_workspaces;
       test_case "Getting all projects response is parsed" `Quick test_list_projects;
     ];
@@ -246,7 +271,7 @@ let () =
       test_case "Stopping time entry response is parsed" `Quick test_stop_time_entry;
       test_case "Getting all projects response is parsed" `Quick test_list_projects;
       test_case "Getting specified time entry response is parsed" `Quick test_time_entry_details;
-      test_case "Getting specified time entry response is parsed" `Quick test_delete_time_entry;
+      test_case "Deleting specified time entry response is parsed" `Quick test_delete_time_entry;
     ];
     "Error case", TestConnectionError.[
       test_case "Creating time entry response returns error" `Quick test_create_time_entry;
@@ -254,7 +279,7 @@ let () =
       test_case "Stopping time entry response returns error" `Quick test_stop_time_entry;
       test_case "Getting current time entry response returns error" `Quick test_current_time_entry;
       test_case "Getting specified time entry response returns error" `Quick test_time_entry_details;
-      test_case "Getting specified time entry response returns error" `Quick test_delete_time_entry;
+      test_case "Deleting specified time entry response returns error" `Quick test_delete_time_entry;
       test_case "Getting all workspaces response returns error" `Quick test_list_workspaces;
       test_case "Getting all projects response returns error" `Quick test_list_projects;
     ];

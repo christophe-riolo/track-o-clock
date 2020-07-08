@@ -57,5 +57,6 @@ type project = {
 
 type workspace_list = workspace list
 type project_list = project list
+type time_entry_list = time_entry list
 type wrapped_time_entry = {time_entry: time_entry}
 type data_time_entry = {data: time_entry}
