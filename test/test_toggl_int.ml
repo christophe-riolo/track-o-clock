@@ -1,13 +1,13 @@
-open TrackOClock.Toggl
 open Lwt
+open Lwt.Syntax
+open TrackOClock.Toggl
 
 (* Create the authenticated client using the token in environment *)
 let username = Sys.getenv "toggl_token"
 let password = "api_token"
 
 module Client = TrackOClock.Toggl.Client(struct let auth = Auth.Basic {username ; password} end)
-module Api = Api(Client)
-open Api
+open Api(Client)
 
 let get_or_failwith = function
   | Ok x -> x
@@ -17,8 +17,8 @@ let client = Client.create @@ Uri.of_string "https://api.toggl.com" >|= get_or_f
 
 (* Utility functions for writing tests *)
 let wait value =
-  Lwt_unix.sleep 0.5
-  >|= function () -> value
+  let* _ = Lwt_unix.sleep 0.5 in
+  return value
 
 let get_workspace _switch () =
   client
@@ -35,18 +35,18 @@ let get_project _switch ({id; _}: Types.workspace) =
 
 let delete_time_entry _switch (time_entry: Types.time_entry) =
   client
-  >>= TimeEntry.delete (CCOpt.get_exn time_entry.id)
+  >>= TimeEntry.delete time_entry.id
   >>= wait
 
 let create_time_entry switch ({id; _}: Types.project) =
   let time_entry = client
-    >>= TimeEntry.create (Types.create_time_entry 
+    >>= TimeEntry.create (Types.create_time_entry
                             ~pid:id
                             ~description:"Test time entry"
                             ~tags:["foo"]
                             ~billable:false
-                            ~start:"2020-01-01T00:00:00Z"
-                            ~duration:5
+                            ~start:(Types.datetime_of_string "\"2020-01-01T00:00:00Z\"")
+                            ~duration:(Some 5)
                             ())
     >|= get_or_failwith
     >>= wait
@@ -56,7 +56,7 @@ let create_time_entry switch ({id; _}: Types.project) =
 
 let stop_time_entry _switch (time_entry: Types.time_entry) =
   client
-  >>= TimeEntry.stop (CCOpt.get_exn time_entry.id)
+  >>= TimeEntry.stop time_entry.id
   >|= get_or_failwith
   >>= wait
 
@@ -71,7 +71,7 @@ let start_time_entry switch ({id; wid; _}: Types.project) =
 
 let get_time_entry _switch (time_entry: Types.time_entry) =
   client
-  >>= TimeEntry.details (CCOpt.get_exn time_entry.id)
+  >>= TimeEntry.details time_entry.id
   >|= get_or_failwith
   >>= wait
 
@@ -86,107 +86,98 @@ let list_time_entries ?start_date ?end_date switch () =
   >>= TimeEntry.list ?start_date ?end_date
   >|= get_or_failwith
   |> both (get_workspace switch ())
-  >|= (function workspace, time_entries -> List.filter (fun (te: Types.time_entry) -> te.wid = Some workspace.id) time_entries)
+  >|= (function workspace, time_entries -> List.filter (fun (te: Types.time_entry) -> te.wid = workspace.id) time_entries)
   >>= wait
 
 (* Tests *)
 let test_start_get_stop_delete switch () =
-  get_workspace switch ()
-  >>= get_project switch
-  >>= start_time_entry switch
-  >|= ignore
-  >>= get_current_time_entry switch
-  >>= stop_time_entry switch
-  >>= delete_time_entry switch
-  >|= ignore
+  let* workspace = get_workspace switch () in
+  let* project = get_project switch workspace in
+  let* _ = start_time_entry switch project in
+  let* time_entry = get_current_time_entry switch () in
+  let* time_entry =  stop_time_entry switch time_entry in
+  let* _ =  delete_time_entry switch time_entry in
+  return ()
 
 let test_start_stop_delete switch () =
-  get_workspace switch ()
-  >>= get_project switch
-  >>= start_time_entry switch
-  >>= stop_time_entry switch
-  >>= delete_time_entry switch
-  >|= ignore
+  let* workspace = get_workspace switch () in
+  let* project =  get_project switch workspace in
+  let* time_entry = start_time_entry switch project in
+  let* time_entry = stop_time_entry switch time_entry in
+  let* _ = delete_time_entry switch time_entry in
+  return ()
 
 let test_start_get_delete switch () =
-  get_workspace switch ()
-  >>= get_project switch
-  >>= start_time_entry switch
-  >|= ignore
-  >>= get_current_time_entry switch
-  >>= delete_time_entry switch
-  >|= ignore
+  let* workspace = get_workspace switch () in
+  let* project = get_project switch workspace in
+  let* _ = start_time_entry switch project in
+  let* time_entry = get_current_time_entry switch () in
+  let* _ = delete_time_entry switch time_entry in
+  return ()
 
 let test_start_delete switch () =
-  get_workspace switch ()
-  >>= get_project switch
-  >>= start_time_entry switch
-  >|= ignore
-  >>= get_current_time_entry switch
-  >>= delete_time_entry switch
-  >|= ignore
+  let* workspace = get_workspace switch () in
+  let* project = get_project switch workspace in
+  let* _ = start_time_entry switch project in
+  let* time_entry = get_current_time_entry switch () in
+  let* _ = delete_time_entry switch time_entry in
+  return ()
 
 let test_create_get_delete switch () =
-  get_workspace switch ()
-  >>= get_project switch
-  >>= create_time_entry switch
-  >>= get_time_entry switch
-  >>= delete_time_entry switch
-  >|= ignore
+  let* workspace = get_workspace switch () in
+  let* project = get_project switch workspace in
+  let* time_entry = create_time_entry switch project in
+  let* time_entry = get_time_entry switch time_entry in
+  let* _ = delete_time_entry switch time_entry in
+  return ()
 
 let test_create_and_list_start_date_before switch () =
   let start_date = Ptime_clock.now () in
   let one_h = Ptime.Span.of_int_s 3600 in
   let start_date = Ptime.sub_span start_date one_h in
-  get_workspace switch ()
-  >>= get_project switch
-  >>= start_time_entry switch
-  >>= stop_time_entry switch
-  >>= fun time_entry -> (
-    list_time_entries ?start_date switch ()
-    >|= Alcotest.(check (list Testables.Toggl.time_entry)) "One issue" [time_entry]
-  )
-  >|= ignore
+  let* workspace = get_workspace switch () in
+  let* project = get_project switch workspace in
+  let* time_entry = start_time_entry switch project in
+  let* time_entry = stop_time_entry switch time_entry in
+  let* time_entries = list_time_entries ?start_date switch () in
+  let* _ = return @@ Alcotest.(check (list Testables.Toggl.time_entry)) "One issue" [time_entry] time_entries in
+  return ()
 
 let test_create_and_list_end_date_after switch () =
   let end_date = Ptime_clock.now () in
   let one_h = Ptime.Span.of_int_s 3600 in
   let end_date = Ptime.add_span end_date one_h in
-  get_workspace switch ()
-  >>= get_project switch
-  >>= start_time_entry switch
-  >>= stop_time_entry switch
-  >>= fun time_entry -> (
-    list_time_entries ?end_date switch ()
-    >|= Alcotest.(check (list Testables.Toggl.time_entry)) "One issue" [time_entry]
-  )
-  >|= ignore
+  let* workspace = get_workspace switch () in
+  let* project = get_project switch workspace in
+  let* time_entry = start_time_entry switch project in
+  let* time_entry = stop_time_entry switch time_entry in
+  let* time_entries = list_time_entries ?end_date switch () in
+  let* _ = return @@ Alcotest.(check (list Testables.Toggl.time_entry)) "One issue" [time_entry] time_entries in
+  return ()
 
 let test_create_and_list_start_date_after switch () =
   let start_date = Ptime_clock.now () in
   let one_h = Ptime.Span.of_int_s 3600 in
   let start_date = Ptime.add_span start_date one_h in
-  get_workspace switch ()
-  >>= get_project switch
-  >>= start_time_entry switch
-  >>= stop_time_entry switch
-  >|= ignore
-  >>= list_time_entries ?start_date switch
-  >|= Alcotest.(check (list Testables.Toggl.time_entry)) "One issue" []
-  >|= ignore
+  let* workspace = get_workspace switch () in
+  let* project = get_project switch workspace in
+  let* time_entry = start_time_entry switch project in
+  let* _ = stop_time_entry switch time_entry in
+  let* time_entries = list_time_entries ?start_date switch () in
+  let* _ = return @@ Alcotest.(check (list Testables.Toggl.time_entry)) "No issue" [] time_entries in
+  return ()
 
 let test_create_and_list_end_date_before switch () =
   let end_date = Ptime_clock.now () in
   let one_h = Ptime.Span.of_int_s 3600 in
   let end_date = Ptime.sub_span end_date one_h in
-  get_workspace switch ()
-  >>= get_project switch
-  >>= start_time_entry switch
-  >>= stop_time_entry switch
-  >|= ignore
-  >>= list_time_entries ?end_date switch
-  >|= Alcotest.(check (list Testables.Toggl.time_entry)) "One issue" []
-  >|= ignore
+  let* workspace = get_workspace switch () in
+  let* project = get_project switch workspace in
+  let* time_entry = start_time_entry switch project in
+  let* _ = stop_time_entry switch time_entry in
+  let* time_entries = list_time_entries ?end_date switch () in
+  let* _ = return @@ Alcotest.(check (list Testables.Toggl.time_entry)) "No issue" [] time_entries in
+  return ()
 
 let () =
   let open Alcotest_lwt in

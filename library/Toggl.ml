@@ -4,7 +4,7 @@ module Types = struct
   include Toggl_j
   include Toggl_v
 
-  let create_time_entry = Toggl_v.create_time_entry ~created_with:"trackoclock"
+  let create_time_entry = Toggl_v.create_time_entry_request ~created_with:"trackoclock"
 
 end
 

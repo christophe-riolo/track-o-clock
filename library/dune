@@ -12,7 +12,7 @@
              ptime
              ptime.clock.os
  )
- (preprocess (pps ppx_deriving_yojson))
+ (preprocess (staged_pps ppx_deriving.show ppx_deriving.eq))
 )
 
 (rule
@@ -24,7 +24,7 @@
 (rule
  (targets toggl_t.ml toggl_t.mli)
  (deps toggl.atd)
- (action (run atdgen -t toggl.atd))
+ (action (run atdgen -t -deriving-conv show,eq toggl.atd))
 )
 
 (rule

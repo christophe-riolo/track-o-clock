@@ -14,13 +14,26 @@ module TestNormalBehaviour = struct
 
   module Api = TrackOClock.Toggl.Api(TogglClient)
 
-  let time_entry = create_time_entry
+  let time_entry = TrackOClock.Toggl_v.create_time_entry
       ~id:436694100
       ~pid:123
       ~wid:777
       ~billable:false
-      ~start:"2013-03-05T07:58:58.000Z"
+      ~start:(datetime_of_string "\"2013-03-05T07:58:58.000Z\"")
       ~duration:1200
+      ~description:"Meeting with possible clients"
+      ~tags:[
+        "billed"
+      ]
+      ~at:(datetime_of_string "\"2013-03-05T07:58:58.000Z\"")
+      ()
+
+  let time_entry_request = create_time_entry
+      ~pid:123
+      ~wid:777
+      ~billable:false
+      ~start:(datetime_of_string "\"2013-03-05T07:58:58.000Z\"")
+      ~duration:(Some 1200)
       ~description:"Meeting with possible clients"
       ~tags:[
         "billed"
@@ -31,22 +44,22 @@ module TestNormalBehaviour = struct
     create_project
       ~id:123
       ~wid:777
-      ~cid:987
       ~name:"Very lucrative project"
       ~billable:false
       ~is_private:true
       ~active:true
-      ~at:"2013-03-06T09:15:18+00:00"
+      ~at:(datetime_of_string "\"2013-03-06T09:15:18+00:00\"")
+      ~created_at:(datetime_of_string "\"2013-03-06T09:15:18+00:00\"")
       ();
     create_project
       ~id:32123
       ~wid:777
-      ~cid:123
       ~name:"Factory server infrastructure"
       ~billable:true
       ~is_private:true
       ~active:true
-      ~at:"2013-03-06T09:16:06+00:00"
+      ~at:(datetime_of_string "\"2013-03-06T09:16:06+00:00\"")
+      ~created_at:(datetime_of_string "\"2013-03-06T09:16:06+00:00\"")
       ();
   ]
 
@@ -62,7 +75,7 @@ module TestNormalBehaviour = struct
       ~only_admins_see_billable_rates:true
       ~rounding:1
       ~rounding_minutes:15
-      ~at:"2013-08-28T16:22:21+00:00"
+      ~at:(datetime_of_string "\"2013-08-28T16:22:21+00:00\"")
       ~logo_url:"my_logo.png"
       ();
     create_workspace
@@ -76,14 +89,14 @@ module TestNormalBehaviour = struct
       ~only_admins_see_billable_rates:true
       ~rounding:1
       ~rounding_minutes:15
-      ~at:"2013-08-28T16:22:21+00:00"
+      ~at:(datetime_of_string "\"2013-08-28T16:22:21+00:00\"")
       ()
   ]
 
   open Lwt_result
   let test_start_time_entry _switch () =
     client
-    >>= Api.TimeEntry.start time_entry
+    >>= Api.TimeEntry.start time_entry_request
     >|= check Testables.Toggl.time_entry "Same time entry" time_entry
     |> raise_error
 
@@ -95,7 +108,7 @@ module TestNormalBehaviour = struct
 
   let test_create_time_entry _switch () =
     client
-    >>= Api.TimeEntry.create time_entry
+    >>= Api.TimeEntry.create time_entry_request
     >|= check Testables.Toggl.time_entry "Same time entry" time_entry
     |> raise_error
 
@@ -209,14 +222,14 @@ module TestConnectionError = struct
 
   let test_start_time_entry _switch () =
     error_client
-    >>= Api.TimeEntry.start (create_time_entry ())
+    >>= Api.TimeEntry.start (create_time_entry ~description:"" ())
     |> map_err Piaf.Error.to_string
     |> map_err (check string "Returns error" "Connect Error: connection error")
     |> Lwt.map Result.get_error
 
   let test_create_time_entry _switch () =
     error_client
-    >>= Api.TimeEntry.create (create_time_entry ())
+    >>= Api.TimeEntry.create (create_time_entry ~description:"" ())
     |> map_err Piaf.Error.to_string
     |> map_err (check string "Returns error" "Connect Error: connection error")
     |> Lwt.map Result.get_error
@@ -255,32 +268,32 @@ let () =
   let open Alcotest_lwt in
   Lwt_main.run @@ Alcotest_lwt.run "Toggl unit tests" [
     "Normal behaviour", TestNormalBehaviour.[
-      test_case "Creating time entry response is parsed" `Quick test_create_time_entry;
-      test_case "Starting time entry response is parsed" `Quick test_start_time_entry;
-      test_case "Stopping time entry response is parsed" `Quick test_stop_time_entry;
-      test_case "Getting current time entry response is parsed" `Quick test_current_time_entry;
-      test_case "Getting specified time entry response is parsed" `Quick test_time_entry_details;
-      test_case "Deleting specified time entry response is parsed" `Quick test_delete_time_entry;
-      test_case "Getting all time entries without query response is parsed" `Quick test_list_time_entries_no_query;
-      test_case "Getting all time entries with query response is parsed" `Quick test_list_time_entries_query;
-      test_case "Getting no time entries with query is parsed" `Quick test_list_time_entries_future;
-      test_case "Getting all workspaces response is parsed" `Quick test_list_workspaces;
-      test_case "Getting all projects response is parsed" `Quick test_list_projects;
-    ];
+        test_case "Creating time entry response is parsed" `Quick test_create_time_entry;
+        test_case "Starting time entry response is parsed" `Quick test_start_time_entry;
+        test_case "Stopping time entry response is parsed" `Quick test_stop_time_entry;
+        test_case "Getting current time entry response is parsed" `Quick test_current_time_entry;
+        test_case "Getting specified time entry response is parsed" `Quick test_time_entry_details;
+        test_case "Deleting specified time entry response is parsed" `Quick test_delete_time_entry;
+        test_case "Getting all time entries without query response is parsed" `Quick test_list_time_entries_no_query;
+        test_case "Getting all time entries with query response is parsed" `Quick test_list_time_entries_query;
+        test_case "Getting no time entries with query is parsed" `Quick test_list_time_entries_future;
+        test_case "Getting all workspaces response is parsed" `Quick test_list_workspaces;
+        test_case "Getting all projects response is parsed" `Quick test_list_projects;
+      ];
     "Page not found", TestNotFound.[
-      test_case "Stopping time entry response is parsed" `Quick test_stop_time_entry;
-      test_case "Getting all projects response is parsed" `Quick test_list_projects;
-      test_case "Getting specified time entry response is parsed" `Quick test_time_entry_details;
-      test_case "Deleting specified time entry response is parsed" `Quick test_delete_time_entry;
-    ];
+        test_case "Stopping time entry response is parsed" `Quick test_stop_time_entry;
+        test_case "Getting all projects response is parsed" `Quick test_list_projects;
+        test_case "Getting specified time entry response is parsed" `Quick test_time_entry_details;
+        test_case "Deleting specified time entry response is parsed" `Quick test_delete_time_entry;
+      ];
     "Error case", TestConnectionError.[
-      test_case "Creating time entry response returns error" `Quick test_create_time_entry;
-      test_case "Starting time entry response returns error" `Quick test_start_time_entry;
-      test_case "Stopping time entry response returns error" `Quick test_stop_time_entry;
-      test_case "Getting current time entry response returns error" `Quick test_current_time_entry;
-      test_case "Getting specified time entry response returns error" `Quick test_time_entry_details;
-      test_case "Deleting specified time entry response returns error" `Quick test_delete_time_entry;
-      test_case "Getting all workspaces response returns error" `Quick test_list_workspaces;
-      test_case "Getting all projects response returns error" `Quick test_list_projects;
-    ];
+        test_case "Creating time entry response returns error" `Quick test_create_time_entry;
+        test_case "Starting time entry response returns error" `Quick test_start_time_entry;
+        test_case "Stopping time entry response returns error" `Quick test_stop_time_entry;
+        test_case "Getting current time entry response returns error" `Quick test_current_time_entry;
+        test_case "Getting specified time entry response returns error" `Quick test_time_entry_details;
+        test_case "Deleting specified time entry response returns error" `Quick test_delete_time_entry;
+        test_case "Getting all workspaces response returns error" `Quick test_list_workspaces;
+        test_case "Getting all projects response returns error" `Quick test_list_projects;
+      ];
   ]
