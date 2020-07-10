@@ -2,15 +2,22 @@ open Alcotest
 
 module Toggl = struct
   open TrackOClock.Toggl.Types
+
   let time_entry: time_entry testable = (module struct
-    type t = [%import: TrackOClock.Toggl.Types.time_entry] [@@deriving show, eq]
+    type t = time_entry
+    let pp = pp_time_entry
+    let equal = equal_time_entry
   end)
 
   let project: project testable = (module struct
-    type t = [%import: TrackOClock.Toggl.Types.project] [@@deriving show, eq]
+    type t = project
+    let pp = pp_project
+    let equal = equal_project
   end)
 
   let workspace: workspace testable = (module struct
-    type t = [%import: TrackOClock.Toggl.Types.workspace] [@@deriving show, eq]
+    type t = workspace
+    let pp = pp_workspace
+    let equal = equal_workspace
   end)
 end

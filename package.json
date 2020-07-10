@@ -27,9 +27,9 @@
         "@opam/base64": "*",
         "@opam/atdgen-runtime": "*",
         "@reason-native-web/gluten-lwt-unix": "*",
+        "@reason-native-web/h2-lwt-unix": "0.6.1001",
         "@opam/lwt": "*",
         "@opam/ptime": "*",
-        "@opam/ppx_import": "1.7.1",
         "@opam/ppx_deriving_yojson": "*"
     },
     "devDependencies": {
