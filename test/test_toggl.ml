@@ -25,6 +25,7 @@ module TestNormalBehaviour = struct
       ~tags:[
         "billed"
       ]
+      ~uid:1
       ~at:(datetime_of_string "\"2013-03-05T07:58:58.000Z\"")
       ()
 
@@ -33,7 +34,7 @@ module TestNormalBehaviour = struct
       ~wid:777
       ~billable:false
       ~start:(datetime_of_string "\"2013-03-05T07:58:58.000Z\"")
-      ~duration:(Some 1200)
+      ~duration:1200
       ~description:"Meeting with possible clients"
       ~tags:[
         "billed"
