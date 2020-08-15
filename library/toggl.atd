@@ -2,6 +2,7 @@
 type tid = int
 type wid = int
 type pid = int
+type uid = int
 type datetime = string wrap <ocaml t="Ptime.t" unwrap="Ptime.to_rfc3339" wrap="fun s -> Ptime.of_rfc3339 s |> CCResult.get_exn |> function (t, _, _) -> t">
 
 <doc text="Response types">
@@ -9,12 +10,13 @@ type datetime = string wrap <ocaml t="Ptime.t" unwrap="Ptime.to_rfc3339" wrap="f
 type time_entry = {
   id: tid;
   wid: wid;
+  uid: uid;
   description: string;
   at: datetime;
   ?pid: pid option;
   start: datetime;
   ?stop: datetime option;
-  ?duration: int option;
+  duration: int;
   ~tags: string list;
   ~duronly: bool;
   ~billable: bool
@@ -74,11 +76,24 @@ type time_entry_request = {
   ?pid: int option;
   ?start: datetime option;
   ?stop: datetime nullable option;
-  ?duration: int nullable option;
+  ~duration: int;
   created_with: string;
   ~tags: string list;
   ~duronly: bool;
   ~billable: bool
 } <json keep_nulls> <doc text="Represents a time entry as we send to Toggl when starting or creating one">
 
+type time_entry_update_request = {
+  ?description: string option;
+  ?wid: int option;
+  ?pid: int nullable option;
+  ?start: datetime option;
+  ?stop: datetime nullable option;
+  ?duration: int option;
+  ?tags: string list option;
+  ?duronly: bool option;
+  ?billable: bool option
+} <json keep_nulls> <doc text="Represents a time entry as we send to Toggl when updating one">
+
 type wrapped_time_entry = {time_entry: time_entry_request}
+type wrapped_time_entry_update_request = {time_entry: time_entry_update_request}

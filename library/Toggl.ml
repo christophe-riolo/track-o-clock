@@ -97,6 +97,30 @@ module Api(Client: module type of Piaf.Client) = struct
       >>= Util.status_200_or_error
       >|= time_entry_list_of_string
 
+    let update tid ?description ?start ?stop ?duration ?tags ?project ?workspace ?duronly ?billable (client: Client.t) =
+      let time_entry = CCOpt.(
+          Types.create_time_entry_update_request
+            ?description
+            ?start
+            ?stop
+            ?duration
+            ?tags
+            ?pid:(project >|= function | None -> None | Some p -> Some p.id)
+            ?wid:(workspace >|= fun w -> w.id)
+            ?duronly
+            ?billable
+            ()
+        )
+      in
+      let body = create_wrapped_time_entry_update_request ~time_entry ()
+                 |> string_of_wrapped_time_entry_update_request
+                 |> Piaf.Body.of_string
+      in
+      Client.put client ~body @@ "/api/v8/time_entries/" ^ (string_of_int tid)
+      >>= Util.status_200_or_error
+      >|= data_time_entry_of_string
+      >|= (fun x -> x.data)
+
   end
 
   module Workspace = struct
