@@ -1,11 +1,9 @@
-npm-debug.log
 .merlin
-yarn-error.log
-node_modules
 node_modules/
 _build
+_esy
 _release
-_esy/
-toggl_ui.install
-.DS_Store
+*.byte
+*.native
 *.install
+**/.merlin

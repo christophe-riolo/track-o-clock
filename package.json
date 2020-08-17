@@ -1,47 +1,71 @@
 {
-    "name": "trackoclock",
+    "name": "unitrack",
     "version": "0.1.0",
-    "description": "My Project",
+    "description": "Starter Revery Project",
     "esy": {
-        "build": "dune build -p trackoclock",
-        "buildDev": "dune build -p  trackoclock",
+        "build": "dune build -p #{self.name}",
+        "buildDev": "pesy build",
         "release": {
-            "releasedBinaries": [
-                "TrackOClockApp.exe"
+            "releasedBinaries": ["UnitrackApp.exe"]
+        }
+    },
+    "pesy": {
+        "azure-project": "pesy/pesy",
+        "github": "pesy/template-revery"
+    },
+    "buildDirs": {
+        "assets": {
+            "rawBuildConfigFooter": [
+                "(install (section bin) (files Roboto-Regular.ttf))"
             ]
+        },
+        "bin": {
+            "imports": [
+                "Revery = require('@opam/Revery')", "BigArray = require('bigarray')"
+            ],
+            "preprocess": ["pps", "brisk-reconciler.ppx"],
+            "bin": {
+                "UnitrackApp.exe": "UnitrackApp.re"
+            }
         }
     },
     "scripts": {
-        "test": "dune runtest",
-        "watch": "dume build @all -w",
-        "bump-patch": "bump patch --commit \"Release v\" --tag \"v\" package.json README.md",
-        "bump-minor": "bump minor --commit \"Release v\" --tag \"v\" package.json README.md",
-        "bump-major": "bump major --commit \"Release v\" --tag \"v\" package.json README.md"
+        "start": "esy x UnitrackApp.exe"
+    },
+    "revery-packager": {
+        "bundleName": "ExampleApp",
+        "bundleId": "com.example.app",
+        "displayName": "Revery Example App",
+        "mainExecutable": "App",
+        "windows": {
+            "packages": ["zip"],
+            "iconFile": "assets/icon.ico"
+        },
+        "darwin": {
+            "packages": ["tar", "dmg"],
+            "iconFile": "assets/icon.icns"
+        },
+        "linux": {
+            "packages": ["tar", "appimage"]
+        }
     },
     "dependencies": {
-        "@opam/dune": ">=1.6.0",
-        "@opam/containers": "*",
-        "@reason-native-web/piaf": "*",
-        "@esy-ocaml/reason": "*",
-        "ocaml": "4.8",
-        "@opam/base64": "*",
-        "@opam/atdgen-runtime": "*",
-        "@reason-native-web/gluten-lwt-unix": "*",
-        "@reason-native-web/h2-lwt-unix": "0.6.1001",
-        "@opam/lwt": "*",
-        "@opam/ptime": "*",
-        "@opam/ppx_deriving_yojson": "*"
+        "@opam/dune": "*",
+        "esy-macdylibbundler": "*",
+        "ocaml": "~4.9",
+        "otoggl": "*",
+        "revery": "revery-ui/revery",
+        "timber": "^1.2.0"
     },
     "devDependencies": {
-        "ocaml": "4.8",
-        "@opam/utop": "*",
-        "@opam/atdgen": "*",
-        "@opam/ocp-indent": "*",
+        "@esy/pesy": "esy/pesy#aa54143",
         "refmterr": "*",
-        "@opam/alcotest": "*",
-        "@opam/alcotest-lwt": "*",
-        "pesy": "*",
-        "@opam/merlin": "*",
-        "@jsdevtools/version-bump-prompt": "*"
+        "@opam/utop": "*",
+        "@opam/merlin": "*"
+    },
+    "resolutions": {
+        "otoggl": "christophe-riolo/OToggl#e03ad0b",
+        "@opam/ppx_tools": "6.0+4.08.0",
+        "@opam/dune-configurator": "2.6.2"
     }
 }

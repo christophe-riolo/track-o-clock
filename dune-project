@@ -1,2 +1,2 @@
-(lang dune 1.6)
- (name trackoclock)
+(lang dune 1.7)
+(name unitrack)

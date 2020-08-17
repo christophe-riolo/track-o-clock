@@ -1,5 +1,0 @@
-(tests
- (names test_toggl test_toggl_int)
- (libraries trackoclock.lib alcotest alcotest-lwt)
- (preprocess (staged_pps ppx_deriving.show ppx_deriving.eq))
-)

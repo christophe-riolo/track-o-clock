@@ -1,57 +1,50 @@
-# Track O'Clock
+# pesy-reason-template
+
+This the template used by pesy to bootstrap Reason projects. Since it contains template variables, it cannot be used on it's own
 
 
-[![CircleCI](https://circleci.com/gh/christophe-riolo/track-o-clock/tree/master.svg?style=svg)](https://circleci.com/gh/christophe-riolo/track-o-clock/tree/master)
+If you are looking for a template repo to bootstrap your Reason project, you can
 
+1. Try [pesy](https://github.com/esy/pesy), or
+2. Fork [hello-reason](https://github.com/esy-ocaml/hello-reason)
+oject root to install and build depenencies.
 
-**Contains the following libraries and executables:**
+    % esy
 
-```
-trackoclock@0.1.0
-│
-├─test/
-│   name:    TestTrackOClock.exe
-│   main:    TestTrackOClock
-│   require: trackoclock.lib
-│
-├─library/
-│   library name: trackoclock.lib
-│   namespace:    TrackOClock
-│   require:
-│
-└─executable/
-    name:    TrackOClockApp.exe
-    main:    TrackOClockApp
-    require: trackoclock.lib
-```
+Now you can run your editor within the environment (which also includes merlin):
 
-## Developing:
+    % esy $EDITOR
+    % esy vim
 
-```
-npm install -g esy
-git clone <this-repo>
-esy install
-esy build
-```
+Alternatively you can try [vim-reasonml](https://github.com/jordwalke/vim-reasonml)
+which loads esy project environments automatically.
 
-## Running Binary:
+After you make some changes to source code, you can re-run project's build
+again with the same simple `esy` command.
 
-After building the project, you can run the main binary that is produced.
+    % esy
 
-```
-esy x TrackOClockApp.exe 
-```
+And test compiled executable (runs `scripts.tests` specified in
+`package.json`):
 
-## Running Tests:
+    % esy test
 
-```
-# Runs the "test" command in `package.json`.
-esy test
-```
+Documentation for the libraries in the project can be generated with:
 
-## Bumping verions:
+    % esy doc
+    % open-cli `esy echo '#{self.target_dir}/default/_doc/_html/index.html'`
+    
+This assumes you have a command like [open-cli](https://github.com/sindresorhus/open-cli) installed on your system.
 
-```
-# Use bump-patch, bump-minor or bump-major
-esy bump-minor
-```
+Shell into environment:
+
+    % esy shell
+
+## Create Prebuilt Release:
+
+`esy` allows creating prebuilt binary packages for your current platform, with
+no dependencies.
+
+    % esy npm-release
+    % cd _release
+    % npm publish
